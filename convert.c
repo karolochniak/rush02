@@ -1,105 +1,119 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   convert.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kochniak <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/13 14:30:00 by kochniak          #+#    #+#             */
+/*   Updated: 2025/07/13 15:05:22 by kochniak         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <unistd.h>
 #include "number_to_words.h"
-#include <stdio.h>
 
-void process1(char fi, t_dict_entry *dict, int dict_size)
+int	full_present(char *nmb, t_dict_entry *dict, int dict_size)
 {
-    present(fi, 0, dict, dict_size);
+	int	i;
+
+	i = 0;
+	while (i < dict_size)
+	{
+		if (ft_strcmp(dict[i].key, nmb) == 0)
+		{
+			if (ft_strcmp(nmb, "100") == 0)
+				ft_putstr("one ");
+			ft_putstr(dict[i].value);
+			ft_putstr("\n");
+			return (1);
+		}
+		i++;
+	}
+	return (0);
 }
 
-void process2(char se, char fi, t_dict_entry *dict, int dict_size)
+static void	process_offset_1(char *nmb, int size, t_dict_entry *dict,
+		int dict_size)
 {
-    if (partial_present(se, fi, dict, dict_size))
-        return;
-    present(se, 1, dict, dict_size);
-    process1(fi, dict, dict_size);
+	int	remaining;
+
+	if (nmb[0] != '0')
+	{
+		process1(nmb[0], dict, dict_size);
+		remaining = size - 1;
+		if (remaining > 0)
+			present('1', remaining, dict, dict_size);
+	}
 }
 
-void process3(char th, char se, char fi, t_dict_entry *dict, int dict_size)
+static void	process_offset_2(char *nmb, int size, t_dict_entry *dict,
+		int dict_size)
 {
-    if (th != '0') {
-        present(th, 0, dict, dict_size);
-        present('1', 2, dict, dict_size);
-    }
-    process2(se, fi, dict, dict_size);
+	int	remaining;
+
+	if (nmb[0] != '0' || nmb[1] != '0')
+	{
+		process2(nmb[0], nmb[1], dict, dict_size);
+		remaining = size - 2;
+		if (remaining > 0)
+			present('1', remaining, dict, dict_size);
+	}
 }
 
-int full_present(char *nmb, t_dict_entry *dict, int dict_size)
+static void	process_groups(t_process_data *data)
 {
-    for (int i = 0; i < dict_size; i++) {
-        if (ft_strcmp(dict[i].key, nmb) == 0) {
-            ft_putstr(dict[i].value);
-            ft_putstr("\n");
-            return 1;
-        }
-    }
-    return 0;
+	int		i;
+	int		remaining;
+	char	chars[4];
+
+	i = data->start;
+	while (i < data->size)
+	{
+		if (data->nmb[i] != '0' || data->nmb[i + 1] != '0' || data->nmb[i + 2] != '0')
+		{
+			chars[0] = data->nmb[i];
+			chars[1] = data->nmb[i + 1];
+			chars[2] = data->nmb[i + 2];
+			chars[3] = '\0';
+			process3(chars, data->dict, data->dict_size);
+			remaining = data->size - i - 3;
+			if (remaining > 0)
+				present('1', remaining, data->dict, data->dict_size);
+		}
+		i += 3;
+	}
 }
 
-int partial_present(char se, char fi, t_dict_entry *dict, int dict_size)
+void	convert_number_to_words(char *nmb, t_dict_entry *dict, int dict_size)
 {
-    char key[3];
-    key[0] = se;
-    key[1] = fi;
-    key[2] = '\0';
+	int				size;
+	int				offset;
+	int				i;
+	t_process_data	data;
 
-    for (int i = 0; i < dict_size; i++) {
-        if (ft_strcmp(dict[i].key, key) == 0) {
-            ft_putstr(dict[i].value);
-            ft_putstr(" ");
-            return 1;
-        }
-    }
-    return 0;
-}
-
-void convert_number_to_words(char *nmb, t_dict_entry *dict, int dict_size)
-{
-    int size = 0;
-    while (nmb[size])
-        size++;
-
-    if (full_present(nmb, dict, dict_size))
-        return;
-
-    int offset = size % 3;
-    int i = 0;
-
-    if (offset == 1) {
-        process1(nmb[0], dict, dict_size);
-        i = 1;
-    } else if (offset == 2) {
-        process2(nmb[0], nmb[1], dict, dict_size);
-        i = 2;
-    }
-
-    while (i < size) {
-        process3(nmb[i], nmb[i + 1], nmb[i + 2], dict, dict_size);
-
-        int remaining = size - i - 3;
-        if (remaining > 0)
-            present('1', remaining, dict, dict_size);
-
-        i += 3;
-    }
-
-    ft_putstr("\n");
-}
-void present(char fi, int index, t_dict_entry *dict, int dict_size)
-{
-    char key[2];
-    key[0] = fi;
-    key[1] = '\0';
-
-    for (int i = 0; i < dict_size; i++) {
-        if (ft_strcmp(dict[i].key, key) == 0) {
-            ft_putstr(dict[i].value);
-            if (index != 0) {
-                ft_putstr(" "); 
-            }
-            return;
-        }
-    }
-    
-    ft_putstr("Unknown");
+	size = 0;
+	while (nmb[size])
+		size++;
+	if (full_present(nmb, dict, dict_size))
+		return ;
+	offset = size % 3;
+	i = 0;
+	if (offset == 1)
+	{
+		process_offset_1(nmb, size, dict, dict_size);
+		i = 1;
+	}
+	else if (offset == 2)
+	{
+		process_offset_2(nmb, size, dict, dict_size);
+		i = 2;
+	}
+	data.nmb = nmb;
+	data.size = size;
+	data.start = i;
+	data.dict = dict;
+	data.dict_size = dict_size;
+	process_groups(&data);
+	ft_putstr("\n");
 }
