@@ -95,3 +95,17 @@ char	*ft_split_once(char *str, char sep)
 	new_str[i] = '\0';
 	return (new_str);
 }
+
+int	correct_nmb(char *n)
+{
+	int	i;
+
+	i = 0;
+	while (n[i])
+	{
+		if (n[i] > '9' || n[i] < '0')
+			return (1);
+		i++;
+	}
+	return (0);
+}

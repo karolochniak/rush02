@@ -38,6 +38,7 @@ int		ft_strlen(char *str);
 char	*ft_strdup(char *src);
 char	*ft_strtrim(char *str);
 char	*ft_split_once(char *str, char sep);
+int		correct_nmb(char *n);
 void	ft_putstr(char *str);
 int		ft_strcmp(char *s1, char *s2);
 

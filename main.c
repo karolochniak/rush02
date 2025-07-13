@@ -18,21 +18,28 @@
 t_dict_entry	*g_dict;
 int				g_dict_size;
 
-int	main(void)
+int	main(int argc, char **argv)
 {
-	char	*nmb;
-
+	if (argc < 2)
+		return (1);
 	g_dict = malloc(sizeof(t_dict_entry) * MAX_DICT_SIZE);
 	if (!g_dict)
 		return (1);
-	g_dict_size = load_dict(g_dict, "numbers.dict");
+	if (argc == 2)
+		g_dict_size = load_dict(g_dict, "numbers.dict");
+	else
+		g_dict_size = load_dict(g_dict, argv[2]);
 	if (g_dict_size == -1)
 	{
 		write(1, "Error\n", 6);
 		return (1);
 	}
-	nmb = "1234";
-	convert_number_to_words(nmb, g_dict, g_dict_size);
+	if (correct_nmb(argv[1]) == 1)
+	{
+		write(1, "Error\n", 6);
+		return (1);
+	}
+	convert_number_to_words(argv[1], g_dict, g_dict_size);
 	free_dict(g_dict, g_dict_size);
 	free(g_dict);
 	return (0);
