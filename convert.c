@@ -70,7 +70,8 @@ static void	process_groups(t_process_data *data)
 	i = data->start;
 	while (i < data->size)
 	{
-		if (data->nmb[i] != '0' || data->nmb[i + 1] != '0' || data->nmb[i + 2] != '0')
+		if (data->nmb[i] != '0' || data->nmb[i + 1] != '0'
+			|| data->nmb[i + 2] != '0')
 		{
 			chars[0] = data->nmb[i];
 			chars[1] = data->nmb[i + 1];
@@ -87,31 +88,19 @@ static void	process_groups(t_process_data *data)
 
 void	convert_number_to_words(char *nmb, t_dict_entry *dict, int dict_size)
 {
-	int				size;
-	int				offset;
-	int				i;
 	t_process_data	data;
 
-	size = 0;
-	while (nmb[size])
-		size++;
+	data.size = 0;
+	while (nmb[data.size])
+		data.size++;
 	if (full_present(nmb, dict, dict_size))
 		return ;
-	offset = size % 3;
-	i = 0;
-	if (offset == 1)
-	{
-		process_offset_1(nmb, size, dict, dict_size);
-		i = 1;
-	}
-	else if (offset == 2)
-	{
-		process_offset_2(nmb, size, dict, dict_size);
-		i = 2;
-	}
+	data.start = data.size % 3;
+	if (data.start == 1)
+		process_offset_1(nmb, data.size, dict, dict_size);
+	else if (data.start == 2)
+		process_offset_2(nmb, data.size, dict, dict_size);
 	data.nmb = nmb;
-	data.size = size;
-	data.start = i;
 	data.dict = dict;
 	data.dict_size = dict_size;
 	process_groups(&data);

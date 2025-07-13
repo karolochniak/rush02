@@ -47,6 +47,8 @@ void	print_dict(t_dict_entry *dict, int size);
 void	free_dict(t_dict_entry *dict, int size);
 char	*find_in_dict(char *key);
 
+void	build_power_key(char *key, int index);
+
 void	process1(char fi, t_dict_entry *dict, int dict_size);
 void	process2(char se, char fi, t_dict_entry *dict, int dict_size);
 void	process3(char *chars, t_dict_entry *dict, int dict_size);

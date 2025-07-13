@@ -103,37 +103,3 @@ void	print_dict(t_dict_entry *dict, int size)
 		i++;
 	}
 }
-
-void	free_dict(t_dict_entry *dict, int size)
-{
-	int	i;
-
-	i = 0;
-	while (i < size)
-	{
-		free(dict[i].key);
-		free(dict[i].value);
-		i++;
-	}
-}
-
-char	*find_in_dict(char *key)
-{
-	int	i;
-	int	j;
-
-	i = 0;
-	while (i < g_dict_size)
-	{
-		if (ft_strlen(g_dict[i].key) == ft_strlen(key))
-		{
-			j = 0;
-			while (g_dict[i].key[j] && g_dict[i].key[j] == key[j])
-				j++;
-			if (g_dict[i].key[j] == '\0')
-				return (g_dict[i].value);
-		}
-		i++;
-	}
-	return (NULL);
-}

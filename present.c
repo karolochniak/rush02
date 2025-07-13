@@ -60,23 +60,6 @@ static void	present_tens(char fi, t_dict_entry *dict, int dict_size)
 	}
 }
 
-static void	build_power_key(char *key, int index)
-{
-	int	j;
-	int	len;
-
-	key[0] = '1';
-	key[1] = '\0';
-	j = 0;
-	while (j < index)
-	{
-		len = ft_strlen(key);
-		key[len] = '0';
-		key[len + 1] = '\0';
-		j++;
-	}
-}
-
 static void	present_power(int index, t_dict_entry *dict, int dict_size)
 {
 	char	key[50];
